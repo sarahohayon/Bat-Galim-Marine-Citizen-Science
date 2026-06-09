@@ -1,0 +1,1558 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bat Galim Marine Survey | סקר ימי בת גלים</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* ─── DESIGN TOKENS ─── */
+    :root {
+      --primary:      #1a6b9a;
+      --primary-dark: #124f73;
+      --primary-light:#e8f4f8;
+      --turtle:       #2e7d32;
+      --turtle-light: #e8f5e9;
+      --ray:          #1565c0;
+      --ray-light:    #e3f2fd;
+      --danger:       #c62828;
+      --text:         #1a2633;
+      --text-muted:   #6b7a8d;
+      --border:       #dde3ec;
+      --bg:           #f0f4f9;
+      --card:         #ffffff;
+      --radius:       14px;
+      --radius-sm:    8px;
+      --shadow:       0 2px 16px rgba(26,107,154,0.10);
+      --shadow-sm:    0 1px 6px rgba(0,0,0,0.07);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* RTL */
+    [dir="rtl"] { font-family: 'Rubik', 'Arial Hebrew', sans-serif; }
+    [dir="rtl"] .form-row { direction: rtl; }
+    [dir="rtl"] .obs-header { flex-direction: row-reverse; }
+    [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] textarea { text-align: right; }
+    [dir="rtl"] .section-title { flex-direction: row-reverse; }
+    [dir="rtl"] .type-select { direction: rtl; }
+    [dir="rtl"] .checkbox-grid { direction: rtl; }
+    [dir="rtl"] .header-left { flex-direction: row-reverse; text-align: right; }
+    [dir="rtl"] header { flex-direction: row-reverse; }
+
+    /* ─── HEADER ─── */
+    header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: white;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo { font-size: 30px; line-height: 1; }
+
+    .header-left h1 { font-size: 17px; font-weight: 700; line-height: 1.2; }
+    .header-left p  { font-size: 11px; opacity: 0.8; margin-top: 1px; }
+
+    .lang-toggle {
+      display: flex;
+      background: rgba(255,255,255,0.15);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+
+    .lang-btn {
+      padding: 5px 13px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.75);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+
+    .lang-btn.active {
+      background: white;
+      color: var(--primary);
+    }
+
+    /* ─── PROGRESS BAR ─── */
+    .progress-strip {
+      background: var(--primary-dark);
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .step-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: background 0.3s;
+    }
+
+    .step-dot.active { background: white; }
+    .step-dot.done   { background: rgba(255,255,255,0.7); }
+
+    .progress-label {
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      margin-left: auto;
+    }
+
+    [dir="rtl"] .progress-label { margin-left: 0; margin-right: auto; }
+
+    /* ─── MAIN ─── */
+    main {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 20px 16px 100px;
+    }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      margin-bottom: 18px;
+      border: 1px solid rgba(221,227,236,0.5);
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--primary-light);
+    }
+
+    .section-title .icon { font-size: 18px; }
+
+    /* ─── FORM FIELDS ─── */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-row.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+    .form-row.single { grid-template-columns: 1fr; }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    input[type="time"],
+    input[type="number"],
+    select,
+    textarea {
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 13px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text);
+      background: white;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      width: 100%;
+      -webkit-appearance: none;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,107,154,0.1);
+    }
+
+    select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b7a8d' d='M6 8L0 0h12z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+    [dir="rtl"] select { background-position: left 12px center; padding-right: 13px; padding-left: 32px; }
+
+    textarea { resize: vertical; min-height: 72px; }
+
+    .required { color: var(--danger); margin-left: 2px; }
+
+    /* ─── LOCATION ─── */
+    .loc-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .loc-btn {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 10px;
+      cursor: pointer;
+      text-align: center;
+      background: white;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .loc-btn:hover { border-color: var(--primary); background: var(--primary-light); }
+    .loc-btn.selected { border-color: var(--primary); background: var(--primary-light); }
+
+    .loc-btn .loc-icon { font-size: 26px; margin-bottom: 5px; }
+    .loc-btn .loc-label { font-size: 12px; font-weight: 600; color: var(--text); }
+    .loc-btn .loc-desc  { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .loc-panel { display: none; }
+    .loc-panel.visible { display: block; }
+
+    /* ─── BLOCK MAP ─── */
+    .map-wrapper {
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 2px solid var(--border);
+      position: relative;
+      background: #1a3a5c;
+      margin-bottom: 10px;
+    }
+
+    .map-wrapper img {
+      width: 100%;
+      display: block;
+      opacity: 0.92;
+    }
+
+    /* Block buttons overlaid on the map */
+    .map-block {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(26,107,154,0.80);
+      border: 2.5px solid rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: all 0.18s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      user-select: none;
+    }
+
+    .map-block:hover {
+      background: rgba(230,81,0,0.85);
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    .map-block.selected {
+      background: #e65100;
+      border-color: white;
+      transform: translate(-50%, -50%) scale(1.25);
+      box-shadow: 0 0 0 3px rgba(230,81,0,0.4), 0 3px 10px rgba(0,0,0,0.4);
+    }
+
+    .block-hint {
+      text-align: center;
+      padding: 8px 12px;
+      background: var(--primary-light);
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      border: 2px solid var(--border);
+      border-top: none;
+    }
+
+    /* ─── COORD FIELDS ─── */
+    .coord-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    /* ─── OBSERVATIONS ─── */
+    .obs-list { display: flex; flex-direction: column; gap: 16px; margin-bottom: 16px; }
+
+    .obs-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+
+    .obs-card:hover { box-shadow: var(--shadow); }
+
+    .obs-header {
+      background: linear-gradient(135deg, #e8f4f8, #d5eaf5);
+      padding: 11px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .obs-label {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .obs-species-tag {
+      font-size: 11px;
+      background: var(--primary);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .obs-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+
+    .obs-remove:hover { background: #fdecea; color: var(--danger); }
+
+    .obs-body { padding: 18px; }
+
+    /* ─── TYPE SELECTION ─── */
+    .type-question {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .type-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .type-btn {
+      border: 2.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 18px 12px;
+      cursor: pointer;
+      text-align: center;
+      background: white;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .type-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .type-btn .type-icon { font-size: 36px; margin-bottom: 6px; display: block; }
+    .type-btn .type-name { font-size: 14px; font-weight: 700; display: block; }
+    .type-btn .type-desc { font-size: 11px; color: var(--text-muted); display: block; margin-top: 2px; }
+
+    .type-btn.turtle { border-color: var(--border); }
+    .type-btn.turtle.selected { border-color: var(--turtle); background: var(--turtle-light); }
+    .type-btn.ray.selected    { border-color: var(--ray); background: var(--ray-light); }
+
+    /* ─── SPECIES GRID ─── */
+    .species-section { margin-bottom: 18px; }
+
+    .species-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .species-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 10px;
+    }
+
+    .species-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: white;
+    }
+
+    .species-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+    .species-card.selected { border-color: var(--primary); background: var(--primary-light); box-shadow: 0 0 0 2px var(--primary); }
+
+    .species-thumb {
+      width: 100%;
+      height: 85px;
+      background: #d6e8f2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .species-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .species-thumb .placeholder-icon { font-size: 38px; }
+
+    .species-info { padding: 8px 9px 10px; }
+    .species-common { font-size: 12px; font-weight: 700; line-height: 1.3; }
+    .species-he     { font-size: 12px; font-weight: 600; color: var(--primary-dark); line-height: 1.3; }
+    .species-sci    { font-size: 10px; color: var(--text-muted); font-style: italic; margin-top: 2px; }
+
+    /* ─── DETAIL FIELDS ─── */
+    .detail-section { display: none; }
+    .detail-section.visible { display: block; }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── ACTIVITY TAGS ─── */
+    .activity-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+    }
+
+    .activity-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 14px;
+    }
+
+    .act-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: inherit;
+      background: white;
+      color: var(--text);
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .act-tag:hover { border-color: var(--primary); background: var(--primary-light); }
+    .act-tag.checked { background: var(--primary); color: white; border-color: var(--primary); }
+
+    /* ─── DIVIDER ─── */
+    .obs-divider {
+      border: none;
+      border-top: 1px dashed var(--border);
+      margin: 14px 0;
+    }
+
+    /* ─── ADD OBSERVATION BUTTON ─── */
+    .add-obs-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px dashed var(--primary);
+      border-radius: var(--radius);
+      background: white;
+      color: var(--primary);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .add-obs-btn:hover { background: var(--primary-light); }
+
+    /* ─── SUBMIT BUTTON ─── */
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      margin-top: 6px;
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn:hover:not(:disabled) { background: var(--primary-dark); }
+    .submit-btn:disabled { background: #b0bec5; cursor: not-allowed; }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      border-top: 1px solid var(--border);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      z-index: 100;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.06);
+    }
+
+    .status-obs-count {
+      color: var(--primary);
+      font-weight: 700;
+      font-size: 15px;
+    }
+
+    .status-msg { color: var(--text-muted); font-size: 12px; }
+
+    /* ─── SUCCESS OVERLAY ─── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(20,40,60,0.65);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+      padding: 20px;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .success-box {
+      background: white;
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      text-align: center;
+      max-width: 360px;
+      width: 100%;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+    }
+
+    .success-icon { font-size: 60px; margin-bottom: 12px; }
+    .success-box h2 { color: var(--turtle); font-size: 22px; margin-bottom: 8px; }
+    .success-box p  { color: var(--text-muted); font-size: 14px; }
+
+    .success-btn {
+      margin-top: 20px;
+      padding: 12px 28px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 15px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* ─── SPINNER ─── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(255,255,255,0.35);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── UTILITIES ─── */
+    .hidden { display: none !important; }
+    .mt-8   { margin-top: 8px; }
+    .mt-14  { margin-top: 14px; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 520px) {
+      .form-row, .form-row.cols-3, .detail-grid { grid-template-columns: 1fr; }
+      .type-grid   { grid-template-columns: 1fr 1fr; }
+      .species-grid { grid-template-columns: 1fr 1fr; }
+      .loc-options  { grid-template-columns: 1fr 1fr; }
+      .coord-row    { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════ HEADER ════════════ -->
+<header>
+  <div class="header-left">
+    <div class="header-logo">🐢</div>
+    <div>
+      <h1 class="t" data-k="app_title">Bat Galim Marine Survey</h1>
+      <p class="t"  data-k="app_sub">Citizen Science | Sea Turtles &amp; Rays</p>
+    </div>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+    <button class="lang-btn"        onclick="setLang('he')">עב</button>
+  </div>
+</header>
+
+<!-- ════════════ MAIN ════════════ -->
+<main>
+
+  <!-- ── SESSION CARD ── -->
+  <div class="card">
+    <div class="section-title">
+      <span class="icon">📋</span>
+      <span class="t" data-k="session_title">Snorkel Session Details</span>
+    </div>
+
+    <!-- Reporter -->
+    <div class="form-row">
+      <div class="field">
+        <label class="t" data-k="f_name">Your name <span class="required">*</span></label>
+        <input type="text" id="reporter_name" placeholder="e.g. Sarah Ohayon" required>
+      </div>
+      <div class="field">
+        <label class="t" data-k="f_email">Email <span class="required">*</span></label>
+        <input type="email" id="reporter_email" placeholder="you@email.com" required>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="field">
+        <label class="t" data-k="f_phone">Phone</label>
+        <input type="tel" id="reporter_phone" placeholder="050-xxx-xxxx">
+      </div>
+      <div class="field">
+        <!-- spacer -->
+      </div>
+    </div>
+
+    <!-- Date & Time -->
+    <div class="form-row">
+      <div class="field">
+        <label class="t" data-k="f_date">Observation date <span class="required">*</span></label>
+        <input type="date" id="obs_date" required>
+      </div>
+      <div class="field">
+        <label class="t" data-k="f_time">Start time</label>
+        <input type="time" id="obs_time">
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LOCATION CARD ── -->
+  <div class="card">
+    <div class="section-title">
+      <span class="icon">📍</span>
+      <span class="t" data-k="location_title">Location</span>
+    </div>
+
+    <div class="loc-options">
+      <button class="loc-btn selected" id="loc-block-btn" onclick="setLocMode('block')">
+        <div class="loc-icon">🗺️</div>
+        <div class="loc-label t" data-k="loc_block">Use block map</div>
+        <div class="loc-desc t" data-k="loc_block_desc">Tap a numbered block</div>
+      </button>
+      <button class="loc-btn" id="loc-gps-btn" onclick="setLocMode('gps')">
+        <div class="loc-icon">📡</div>
+        <div class="loc-label t" data-k="loc_gps">Enter coordinates</div>
+        <div class="loc-desc t" data-k="loc_gps_desc">Lat / Lon from GPS or camera</div>
+      </button>
+    </div>
+
+    <!-- Block map panel -->
+    <div class="loc-panel visible" id="panel-block">
+      <div class="map-wrapper">
+        <!--
+          ★ SETUP: Replace "map.jpg" with your actual map filename.
+          Place the file in the same folder as index.html.
+        -->
+        <img src="map.jpg" alt="Bat Galim block map" id="map-img" onerror="this.style.display='none'; document.getElementById('map-fallback').style.display='flex'">
+
+        <!-- Fallback if map image not found -->
+        <div id="map-fallback" style="display:none; background:#1a3a5c; min-height:200px; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:white; padding:20px; text-align:center;">
+          <div style="font-size:40px">🗺️</div>
+          <div style="font-weight:600; font-size:14px">Map image not found</div>
+          <div style="font-size:12px; opacity:0.7">Place <code>map.jpg</code> in the same folder as index.html</div>
+          <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;" id="fallback-blocks"></div>
+        </div>
+
+        <!--
+          ★ BLOCK POSITIONS: Adjust the left/top % values to match your map image.
+          These are set to match the Bat Galim grid photo you provided.
+          (left%, top%) measured from top-left corner of the image.
+        -->
+        <div class="map-block" style="left:40.8%;top:23.5%" data-block="1"  onclick="selectBlock(1)">1</div>
+        <div class="map-block" style="left:43.5%;top:17.5%" data-block="2"  onclick="selectBlock(2)">2</div>
+        <div class="map-block" style="left:47.0%;top:23.0%" data-block="3"  onclick="selectBlock(3)">3</div>
+        <div class="map-block" style="left:37.8%;top:26.5%" data-block="4"  onclick="selectBlock(4)">4</div>
+        <div class="map-block" style="left:40.0%;top:20.5%" data-block="5"  onclick="selectBlock(5)">5</div>
+        <div class="map-block" style="left:33.5%;top:27.5%" data-block="6"  onclick="selectBlock(6)">6</div>
+        <div class="map-block" style="left:34.5%;top:22.0%" data-block="7"  onclick="selectBlock(7)">7</div>
+        <div class="map-block" style="left:31.0%;top:27.5%" data-block="8"  onclick="selectBlock(8)">8</div>
+        <div class="map-block" style="left:31.5%;top:21.0%" data-block="9"  onclick="selectBlock(9)">9</div>
+        <div class="map-block" style="left:26.5%;top:27.5%" data-block="10" onclick="selectBlock(10)">10</div>
+        <div class="map-block" style="left:25.8%;top:32.0%" data-block="11" onclick="selectBlock(11)">11</div>
+        <div class="map-block" style="left:20.5%;top:33.5%" data-block="12" onclick="selectBlock(12)">12</div>
+      </div>
+      <div class="block-hint t" data-k="block_hint" id="block-hint">Tap a block to select your location</div>
+    </div>
+
+    <!-- GPS panel -->
+    <div class="loc-panel" id="panel-gps">
+      <div class="coord-row">
+        <div class="field">
+          <label class="t" data-k="f_lat">Latitude</label>
+          <input type="number" id="gps_lat" placeholder="32.833" step="0.000001">
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_lon">Longitude</label>
+          <input type="number" id="gps_lon" placeholder="34.974" step="0.000001">
+        </div>
+      </div>
+      <div class="mt-8" style="font-size:12px; color:var(--text-muted)">
+        <span class="t" data-k="gps_hint">Tip: find coordinates from your camera's GPS or from Google Maps (right-click → What's here?)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── OBSERVATIONS CARD ── -->
+  <div class="card">
+    <div class="section-title">
+      <span class="icon">🔍</span>
+      <span class="t" data-k="obs_title">Sightings</span>
+      <span id="obs-badge" style="margin-left:auto; background:var(--primary); color:white; font-size:12px; padding:2px 10px; border-radius:10px;">0</span>
+    </div>
+
+    <div id="obs-list" class="obs-list"></div>
+
+    <button class="add-obs-btn" onclick="addObservation()">
+      <span style="font-size:20px">＋</span>
+      <span class="t" data-k="add_obs">Add a sighting</span>
+    </button>
+  </div>
+
+  <!-- ── SUBMIT ── -->
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()">
+    <span class="t" data-k="submit_btn">Submit all observations</span>
+  </button>
+
+  <p style="text-align:center; font-size:12px; color:var(--text-muted); margin-top:10px;" class="t" data-k="submit_note">
+    All fields marked * are required. Data will be saved to the project spreadsheet.
+  </p>
+
+</main>
+
+<!-- ── STATUS BAR ── -->
+<div class="status-bar">
+  <div>
+    <span class="t" data-k="status_sightings">Sightings this session:</span>
+    <span class="status-obs-count" id="status-count">0</span>
+  </div>
+  <div class="status-msg t" data-k="status_hint">Fill session details above, then add sightings</div>
+</div>
+
+<!-- ── SUCCESS OVERLAY ── -->
+<div class="overlay hidden" id="success-overlay">
+  <div class="success-box">
+    <div class="success-icon">🐢</div>
+    <h2 class="t" data-k="success_title">Thank you!</h2>
+    <p class="t" data-k="success_msg">Your observations have been recorded. See you on the water!</p>
+    <button class="success-btn" onclick="resetForm()" class="t" data-k="success_btn">Report another session</button>
+  </div>
+</div>
+
+
+<!-- ════════════ SCRIPT ════════════ -->
+<script>
+// ──────────────────────────────────────────────
+//  CONFIG — fill in your Google Apps Script URL
+// ──────────────────────────────────────────────
+const CONFIG = {
+  // ★ Paste your deployed Apps Script web app URL here:
+  SHEET_URL: 'https://script.google.com/macros/s/AKfycbw1qlDGGTRQCmGLKcCE6nCb6qV56OIc1FWWV8ermi4n2Okr-D60dYyAUadzbWjVzxpu0Q/exec',
+};
+
+// ──────────────────────────────────────────────
+//  TRANSLATIONS
+// ──────────────────────────────────────────────
+const T = {
+  en: {
+    app_title:      'Bat Galim Marine Survey',
+    app_sub:        'Citizen Science | Sea Turtles & Rays',
+    session_title:  'Snorkel Session Details',
+    f_name:         'Your name *',
+    f_email:        'Email *',
+    f_phone:        'Phone',
+    f_date:         'Observation date *',
+    f_time:         'Start time',
+    location_title: 'Location',
+    loc_block:      'Use block map',
+    loc_block_desc: 'Tap a numbered block',
+    loc_gps:        'Enter coordinates',
+    loc_gps_desc:   'Lat / Lon from GPS or camera',
+    block_hint:     'Tap a block to select your location',
+    block_selected: 'Selected: Block',
+    f_lat:          'Latitude',
+    f_lon:          'Longitude',
+    gps_hint:       'Find coords from camera GPS or Google Maps (right-click → What\'s here?)',
+    obs_title:      'Sightings',
+    add_obs:        'Add a sighting',
+    obs_label:      'Sighting',
+    q_type:         'What did you see?',
+    turtle_name:    'Sea Turtle',
+    turtle_desc:    'Caretta / Chelonia',
+    ray_name:       'Ray',
+    ray_desc:       'Stingray / Guitarfish',
+    q_species:      'Select species',
+    f_sex:          'Sex',
+    sex_m:          'Male',
+    sex_f:          'Female',
+    sex_u:          "I don't know",
+    f_depth:        'Depth',
+    f_size:         'Size (carapace / disc width)',
+    f_count:        'No. of individuals',
+    f_activity:     'Activity (select all that apply)',
+    act_swimming:   'Swimming',
+    act_resting:    'Resting',
+    act_eating:     'Eating / Foraging',
+    act_sleeping:   'Sleeping',
+    act_mating:     'Courtship / Mating',
+    act_other:      'Other',
+    f_notes:        'Special observations',
+    f_notes_ph:     'Any notable behaviour, injuries, tags, unusual conditions…',
+    f_photos:       'Photo reference',
+    f_photos_ph:    'Google Drive link, filename, or description',
+    f_ind_time:     'Time of this sighting (optional)',
+    submit_btn:     'Submit all observations',
+    submit_note:    'Fields marked * are required. Data is saved to the project spreadsheet.',
+    status_sightings:'Sightings this session:',
+    status_hint:    'Fill in session details, then add sightings',
+    success_title:  'Thank you!',
+    success_msg:    'Your observations have been recorded. See you on the water!',
+    success_btn:    'Report another session',
+    error_name:     'Please enter your name.',
+    error_email:    'Please enter a valid email.',
+    error_date:     'Please select the observation date.',
+    error_location: 'Please select a location block or enter coordinates.',
+    error_no_obs:   'Please add at least one sighting.',
+    error_type:     'Please select Sea Turtle or Ray for each sighting.',
+    error_species:  'Please select a species for each sighting.',
+    submitting:     'Saving…',
+    depth_1_2:  '1–2 m', depth_2_3: '2–3 m', depth_3_4: '3–4 m',
+    depth_4_5:  '4–5 m', depth_5_6: '5–6 m', depth_6_7: '6–7 m',
+    depth_other:'Other',
+    size_lt30:  '< 30 cm', size_30_50:'30–50 cm', size_50_70:'50–70 cm',
+    size_70_90: '70–90 cm', size_90_110:'90–110 cm', size_110_150:'110–150 cm',
+    size_gt150: '> 150 cm',
+  },
+  he: {
+    app_title:      'סקר ימי – בת גלים',
+    app_sub:        'מדע אזרחי | צבי ים ואלחים',
+    session_title:  'פרטי יציאת הצלילה',
+    f_name:         'שמך *',
+    f_email:        'אימייל *',
+    f_phone:        'טלפון',
+    f_date:         'תאריך התצפית *',
+    f_time:         'שעת יציאה',
+    location_title: 'מיקום',
+    loc_block:      'מפת בלוקים',
+    loc_block_desc: 'לחץ על בלוק מספרי',
+    loc_gps:        'קואורדינטות',
+    loc_gps_desc:   'קו רוחב / אורך מ-GPS',
+    block_hint:     'לחץ על בלוק לבחירת המיקום',
+    block_selected: 'נבחר: בלוק',
+    f_lat:          'קו רוחב',
+    f_lon:          'קו אורך',
+    gps_hint:       'ניתן למצוא קואורדינטות מ-GPS של המצלמה או מ-Google Maps',
+    obs_title:      'תצפיות',
+    add_obs:        'הוסף תצפית',
+    obs_label:      'תצפית',
+    q_type:         'מה ראית?',
+    turtle_name:    'צב ים',
+    turtle_desc:    'קרטה / כלוניה',
+    ray_name:       'אלח',
+    ray_desc:       'עכנאי / גיטרה',
+    q_species:      'בחר מין',
+    f_sex:          'מין (ז/נ)',
+    sex_m:          'זכר',
+    sex_f:          'נקבה',
+    sex_u:          'לא יודע/ת',
+    f_depth:        'עומק',
+    f_size:         'גודל (רוחב שריון / דיסק)',
+    f_count:        'מספר פרטים',
+    f_activity:     'פעילות (ניתן לסמן מספר)',
+    act_swimming:   'שחייה',
+    act_resting:    'מנוחה',
+    act_eating:     'אכילה / איסוף מזון',
+    act_sleeping:   'שינה',
+    act_mating:     'חיזור / הזדווגות',
+    act_other:      'אחר',
+    f_notes:        'תצפיות מיוחדות',
+    f_notes_ph:     'התנהגות חריגה, פצעים, תגיות, תנאים יוצאי דופן…',
+    f_photos:       'הפניה לתמונות',
+    f_photos_ph:    'קישור Google Drive, שם קובץ, או תיאור',
+    f_ind_time:     'שעת תצפית ספציפית (אופציונלי)',
+    submit_btn:     'שלח את כל התצפיות',
+    submit_note:    'שדות עם * הם חובה. הנתונים נשמרים בגיליון הפרויקט.',
+    status_sightings:'תצפיות ביציאה הנוכחית:',
+    status_hint:    'מלא פרטי יציאה, ואז הוסף תצפיות',
+    success_title:  'תודה רבה!',
+    success_msg:    'התצפיות שלך נשמרו. נתראה במים!',
+    success_btn:    'דיווח יציאה נוספת',
+    error_name:     'נא להזין שם.',
+    error_email:    'נא להזין כתובת אימייל תקינה.',
+    error_date:     'נא לבחור תאריך.',
+    error_location: 'נא לבחור בלוק מיקום או להזין קואורדינטות.',
+    error_no_obs:   'נא להוסיף לפחות תצפית אחת.',
+    error_type:     'נא לבחור צב ים או אלח לכל תצפית.',
+    error_species:  'נא לבחור מין לכל תצפית.',
+    submitting:     'שומר…',
+    depth_1_2:  '1–2 מ\'', depth_2_3: '2–3 מ\'', depth_3_4: '3–4 מ\'',
+    depth_4_5:  '4–5 מ\'', depth_5_6: '5–6 מ\'', depth_6_7: '6–7 מ\'',
+    depth_other:'אחר',
+    size_lt30:  '< 30 ס"מ', size_30_50:'30–50 ס"מ', size_50_70:'50–70 ס"מ',
+    size_70_90: '70–90 ס"מ', size_90_110:'90–110 ס"מ', size_110_150:'110–150 ס"מ',
+    size_gt150: '> 150 ס"מ',
+  }
+};
+
+// ──────────────────────────────────────────────
+//  SPECIES DATA
+//  ★ To add photos: place images in a "species/" folder
+//    and set the img property to the filename, e.g. "species/caretta.jpg"
+// ──────────────────────────────────────────────
+const SPECIES = {
+  turtle: [
+    {
+      id: 'Caretta caretta',
+      en: 'Loggerhead Turtle',
+      he: 'צב ים ראש-גדול',
+      icon: '🐢',
+      img: 'species/caretta.jpg',
+      note_en: 'Large head, reddish-brown. Most common here.',
+      note_he: 'ראש גדול, חום-אדמדם. הנפוץ ביותר באזור.',
+    },
+    {
+      id: 'Chelonia mydas',
+      en: 'Green Turtle',
+      he: 'צב ים ירוק',
+      icon: '🐢',
+      img: 'species/mydas.jpg',
+      note_en: 'Smooth shell, smaller head, often juveniles.',
+      note_he: 'שריון חלק, ראש קטן יחסית, לרוב צעירים.',
+    },
+  ],
+  ray: [
+    {
+      id: 'Dasyatis spp.',
+      en: 'Common Stingray',
+      he: 'עכנאי',
+      icon: '🦈',
+      img: 'species/dasyatis.jpg',
+      note_en: 'Diamond-shaped disc, long whip tail.',
+      note_he: 'גוף מעוין, זנב שוט ארוך.',
+    },
+    {
+      id: 'Himantura spp.',
+      en: 'Whipray',
+      he: 'עכנאי שוט',
+      icon: '🦈',
+      img: 'species/himantura.jpg',
+      note_en: 'Very long thin tail, rounded disc.',
+      note_he: 'זנב ארוך מאוד ודק, דיסק עגלגל.',
+    },
+    {
+      id: 'Rhinoptera marginata',
+      en: 'Lusitanian Cownose Ray',
+      he: 'עכנאי פרה',
+      icon: '🦈',
+      img: 'species/rhinoptera.jpg',
+      note_en: 'Distinctive notched head, schools in open water.',
+      note_he: 'ראש חצוי מאפיין, נוסע בלהקות.',
+    },
+    {
+      id: 'Taeniurops grabatus',
+      en: 'Round Ribbontail Ray',
+      he: 'עכנאי עגול',
+      icon: '🦈',
+      img: 'species/taeniurops.jpg',
+      note_en: 'Circular disc, short tail with ribbon-like fin.',
+      note_he: 'גוף עגול, זנב קצר עם סנפיר-סרט.',
+    },
+    {
+      id: 'Rhinobatidae',
+      en: 'Guitarfish',
+      he: 'דג גיטרה',
+      icon: '🦈',
+      img: 'species/guitarfish.jpg',
+      note_en: 'Shark-like body, flattened front end.',
+      note_he: 'גוף דמוי כריש, חזית שטוחה.',
+    },
+  ],
+};
+
+// ──────────────────────────────────────────────
+//  STATE
+// ──────────────────────────────────────────────
+let lang     = 'en';
+let locMode  = 'block';
+let selBlock = null;
+let obsCount = 0;
+let obsData  = [];   // array of observation objects (for tracking state)
+
+// ──────────────────────────────────────────────
+//  LANG
+// ──────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  const root = document.getElementById('html-root');
+  root.setAttribute('lang', l);
+  root.setAttribute('dir', l === 'he' ? 'rtl' : 'ltr');
+
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === (l === 'en' ? 'EN' : 'עב'));
+  });
+
+  // Update all translatable elements
+  document.querySelectorAll('.t[data-k]').forEach(el => {
+    const key = el.getAttribute('data-k');
+    if (T[l][key] !== undefined) el.textContent = T[l][key];
+  });
+
+  // Re-render active observations to update species labels etc.
+  document.querySelectorAll('.obs-card').forEach(card => {
+    const idx = parseInt(card.getAttribute('data-idx'));
+    updateObsLabel(card, idx);
+  });
+
+  // Update block hint
+  updateBlockHint();
+}
+
+function t(key) {
+  return T[lang][key] || T.en[key] || key;
+}
+
+// ──────────────────────────────────────────────
+//  LOCATION
+// ──────────────────────────────────────────────
+function setLocMode(mode) {
+  locMode = mode;
+  document.getElementById('loc-block-btn').classList.toggle('selected', mode === 'block');
+  document.getElementById('loc-gps-btn').classList.toggle('selected', mode === 'gps');
+  document.getElementById('panel-block').classList.toggle('visible', mode === 'block');
+  document.getElementById('panel-gps').classList.toggle('visible', mode === 'gps');
+}
+
+function selectBlock(num) {
+  selBlock = num;
+  document.querySelectorAll('.map-block').forEach(b => {
+    b.classList.toggle('selected', parseInt(b.getAttribute('data-block')) === num);
+  });
+  updateBlockHint();
+  // Populate fallback buttons
+  const fb = document.getElementById('fallback-blocks');
+  if (fb) {
+    Array.from(fb.children).forEach(b => {
+      b.style.background = (parseInt(b.getAttribute('data-block')) === num)
+        ? '#e65100' : 'rgba(255,255,255,0.15)';
+    });
+  }
+}
+
+function updateBlockHint() {
+  const el = document.getElementById('block-hint');
+  if (el) {
+    el.textContent = selBlock
+      ? `${t('block_selected')} ${selBlock}`
+      : t('block_hint');
+  }
+}
+
+// Build fallback block buttons (shown when map image missing)
+function buildFallbackBlocks() {
+  const fb = document.getElementById('fallback-blocks');
+  if (!fb) return;
+  for (let i = 1; i <= 12; i++) {
+    const b = document.createElement('button');
+    b.textContent = i;
+    b.setAttribute('data-block', i);
+    b.onclick = () => selectBlock(i);
+    b.style.cssText = `
+      width:44px; height:44px; border-radius:50%; border:2px solid rgba(255,255,255,0.6);
+      background:rgba(255,255,255,0.15); color:white; font-weight:700; font-size:14px;
+      cursor:pointer; transition:background 0.15s; font-family:inherit;
+    `;
+    fb.appendChild(b);
+  }
+}
+
+// ──────────────────────────────────────────────
+//  OBSERVATIONS
+// ──────────────────────────────────────────────
+function addObservation() {
+  obsCount++;
+  const idx = obsCount;
+  obsData.push({ idx, type: null, species: null, activities: [] });
+
+  const card = document.createElement('div');
+  card.className = 'obs-card';
+  card.setAttribute('data-idx', idx);
+  card.innerHTML = buildObsHTML(idx);
+  document.getElementById('obs-list').appendChild(card);
+  updateCounters();
+
+  // Scroll into view
+  setTimeout(() => card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+}
+
+function buildObsHTML(idx) {
+  const depthOpts = [
+    ['', '—'],
+    ['1-2 meters', t('depth_1_2')],
+    ['2-3 meters', t('depth_2_3')],
+    ['3-4 meters', t('depth_3_4')],
+    ['4-5 meters', t('depth_4_5')],
+    ['5-6 meters', t('depth_5_6')],
+    ['6-7 meters', t('depth_6_7')],
+    ['other',      t('depth_other')],
+  ].map(([v,l]) => `<option value="${v}">${l}</option>`).join('');
+
+  const sizeOpts = [
+    ['', '—'],
+    ['Smaller than 30 cm', t('size_lt30')],
+    ['30-50 cm',  t('size_30_50')],
+    ['50-70 cm',  t('size_50_70')],
+    ['70-90 cm',  t('size_70_90')],
+    ['90-110 cm', t('size_90_110')],
+    ['110-150 cm',t('size_110_150')],
+    ['Larger than 150 cm', t('size_gt150')],
+  ].map(([v,l]) => `<option value="${v}">${l}</option>`).join('');
+
+  const activities = ['swimming','resting','eating','sleeping','mating','other'];
+
+  return `
+  <div class="obs-header">
+    <div class="obs-label">
+      <span>${t('obs_label')} #${idx}</span>
+      <span class="obs-species-tag hidden" id="species-tag-${idx}"></span>
+    </div>
+    <button class="obs-remove" onclick="removeObservation(${idx})" title="Remove">✕</button>
+  </div>
+  <div class="obs-body">
+
+    <!-- STEP 1: type -->
+    <div class="type-question t" data-k="q_type">${t('q_type')}</div>
+    <div class="type-grid">
+      <button class="type-btn turtle" onclick="selectType(${idx},'turtle')">
+        <span class="type-icon">🐢</span>
+        <span class="type-name t" data-k="turtle_name">${t('turtle_name')}</span>
+        <span class="type-desc t" data-k="turtle_desc">${t('turtle_desc')}</span>
+      </button>
+      <button class="type-btn ray" onclick="selectType(${idx},'ray')">
+        <span class="type-icon">🦈</span>
+        <span class="type-name t" data-k="ray_name">${t('ray_name')}</span>
+        <span class="type-desc t" data-k="ray_desc">${t('ray_desc')}</span>
+      </button>
+    </div>
+
+    <!-- STEP 2: species (hidden until type chosen) -->
+    <div class="species-section hidden" id="species-section-${idx}">
+      <div class="species-label t" data-k="q_species">${t('q_species')}</div>
+      <div class="species-grid" id="species-grid-${idx}"></div>
+    </div>
+
+    <!-- STEP 3: details (hidden until species chosen) -->
+    <div class="detail-section" id="detail-section-${idx}">
+      <hr class="obs-divider">
+
+      <div class="detail-grid">
+        <div class="field">
+          <label class="t" data-k="f_sex">${t('f_sex')}</label>
+          <select id="sex-${idx}">
+            <option value="">—</option>
+            <option value="male"   class="t" data-k="sex_m">${t('sex_m')}</option>
+            <option value="female" class="t" data-k="sex_f">${t('sex_f')}</option>
+            <option value="0"      class="t" data-k="sex_u">${t('sex_u')}</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_count">${t('f_count')}</label>
+          <input type="number" id="count-${idx}" value="1" min="1" max="999">
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_depth">${t('f_depth')}</label>
+          <select id="depth-${idx}">${depthOpts}</select>
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_size">${t('f_size')}</label>
+          <select id="size-${idx}">${sizeOpts}</select>
+        </div>
+      </div>
+
+      <div class="activity-label t" data-k="f_activity">${t('f_activity')}</div>
+      <div class="activity-grid" id="activity-grid-${idx}">
+        ${activities.map(a => `
+          <button class="act-tag" data-act="${a}" onclick="toggleActivity(this, ${idx})">
+            ${actIcon(a)} <span class="t" data-k="act_${a}">${t('act_'+a)}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="field mt-14">
+        <label class="t" data-k="f_notes">${t('f_notes')}</label>
+        <textarea id="notes-${idx}" placeholder="${t('f_notes_ph')}"></textarea>
+      </div>
+
+      <div class="form-row mt-8">
+        <div class="field">
+          <label class="t" data-k="f_photos">${t('f_photos')}</label>
+          <input type="text" id="photos-${idx}" placeholder="${t('f_photos_ph')}">
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_ind_time">${t('f_ind_time')}</label>
+          <input type="time" id="ind-time-${idx}">
+        </div>
+      </div>
+    </div>
+
+  </div>`;
+}
+
+function actIcon(a) {
+  return { swimming:'🏊', resting:'😴', eating:'🍽️', sleeping:'💤', mating:'❤️', other:'📝' }[a] || '';
+}
+
+function selectType(idx, type) {
+  const state = obsData.find(o => o.idx === idx);
+  if (state) { state.type = type; state.species = null; }
+
+  // Update button styles
+  const card = document.querySelector(`.obs-card[data-idx="${idx}"]`);
+  card.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'));
+  card.querySelector(`.type-btn.${type}`).classList.add('selected');
+
+  // Show species grid
+  buildSpeciesGrid(idx, type);
+  document.getElementById(`species-section-${idx}`).classList.remove('hidden');
+
+  // Hide details until species chosen
+  document.getElementById(`detail-section-${idx}`).classList.remove('visible');
+
+  // Reset species tag
+  const tag = document.getElementById(`species-tag-${idx}`);
+  tag.classList.add('hidden');
+  tag.textContent = '';
+}
+
+function buildSpeciesGrid(idx, type) {
+  const grid = document.getElementById(`species-grid-${idx}`);
+  grid.innerHTML = '';
+
+  SPECIES[type].forEach(sp => {
+    const card = document.createElement('div');
+    card.className = 'species-card';
+    card.setAttribute('data-species', sp.id);
+    card.onclick = () => selectSpecies(idx, sp.id, type);
+
+    const hasImg = sp.img;
+    card.innerHTML = `
+      <div class="species-thumb">
+        ${hasImg
+          ? `<img src="${sp.img}" alt="${sp.en}" onerror="this.parentElement.innerHTML='<span class=\\'placeholder-icon\\'>${sp.icon}</span>'">`
+          : `<span class="placeholder-icon">${sp.icon}</span>`
+        }
+      </div>
+      <div class="species-info">
+        <div class="species-common">${lang === 'he' ? sp.he : sp.en}</div>
+        <div class="species-he" style="${lang === 'he' ? 'display:none' : ''}">${sp.he}</div>
+        <div class="species-sci">${sp.id}</div>
+        <div style="font-size:10px; color:var(--text-muted); margin-top:3px; line-height:1.3">
+          ${lang === 'he' ? sp.note_he : sp.note_en}
+        </div>
+      </div>`;
+
+    grid.appendChild(card);
+  });
+}
+
+function selectSpecies(idx, speciesId, type) {
+  const state = obsData.find(o => o.idx === idx);
+  if (state) state.species = speciesId;
+
+  // Update card styles
+  document.querySelectorAll(`#species-grid-${idx} .species-card`).forEach(c => {
+    c.classList.toggle('selected', c.getAttribute('data-species') === speciesId);
+  });
+
+  // Show detail section
+  document.getElementById(`detail-section-${idx}`).classList.add('visible');
+
+  // Update the species tag in header
+  const sp = SPECIES[type].find(s => s.id === speciesId);
+  if (sp) {
+    const tag = document.getElementById(`species-tag-${idx}`);
+    tag.textContent = lang === 'he' ? sp.he : sp.en;
+    tag.classList.remove('hidden');
+  }
+}
+
+function updateObsLabel(card, idx) {
+  // Called on lang change — update species tag text if set
+  const state = obsData.find(o => o.idx === idx);
+  if (!state || !state.species || !state.type) return;
+  const sp = SPECIES[state.type]?.find(s => s.id === state.species);
+  if (sp) {
+    const tag = document.getElementById(`species-tag-${idx}`);
+    if (tag) tag.textContent = lang === 'he' ? sp.he : sp.en;
+  }
+}
+
+function toggleActivity(btn, idx) {
+  btn.classList.toggle('checked');
+  const state = obsData.find(o => o.idx === idx);
+  if (!state) return;
+  const act = btn.getAttribute('data-act');
+  if (btn.classList.contains('checked')) {
+    if (!state.activities.includes(act)) state.activities.push(act);
+  } else {
+    state.activities = state.activities.filter(a => a !== act);
+  }
+}
+
+function removeObservation(idx) {
+  obsData = obsData.filter(o => o.idx !== idx);
+  const card = document.querySelector(`.obs-card[data-idx="${idx}"]`);
+  if (card) card.remove();
+  updateCounters();
+}
+
+function updateCounters() {
+  const n = document.querySelectorAll('.obs-card').length;
+  document.getElementById('obs-badge').textContent = n;
+  document.getElementById('status-count').textContent = n;
+}
+
+// ──────────────────────────────────────────────
+//  FORM VALIDATION & SUBMIT
+// ──────────────────────────────────────────────
+function validate() {
+  const name  = document.getElementById('reporter_name').value.trim();
+  const email = document.getElementById('reporter_email').value.trim();
+  const date  = document.getElementById('obs_date').value;
+
+  if (!name)                      { alert(t('error_name'));     return false; }
+  if (!email || !email.includes('@')) { alert(t('error_email')); return false; }
+  if (!date)                      { alert(t('error_date'));     return false; }
+
+  if (locMode === 'block' && !selBlock) { alert(t('error_location')); return false; }
+  if (locMode === 'gps') {
+    const lat = document.getElementById('gps_lat').value;
+    const lon = document.getElementById('gps_lon').value;
+    if (!lat || !lon) { alert(t('error_location')); return false; }
+  }
+
+  const cards = document.querySelectorAll('.obs-card');
+  if (cards.length === 0) { alert(t('error_no_obs')); return false; }
+
+  for (const state of obsData) {
+    if (!state.type)    { alert(t('error_type'));    return false; }
+    if (!state.species) { alert(t('error_species')); return false; }
+  }
+
+  return true;
+}
+
+function buildRows() {
+  const name    = document.getElementById('reporter_name').value.trim();
+  const email   = document.getElementById('reporter_email').value.trim();
+  const phone   = document.getElementById('reporter_phone').value.trim();
+  const date    = document.getElementById('obs_date').value;
+  const time    = document.getElementById('obs_time').value;
+  const now     = new Date().toISOString();
+
+  const lat     = locMode === 'gps' ? document.getElementById('gps_lat').value : 'NA';
+  const lon     = locMode === 'gps' ? document.getElementById('gps_lon').value : 'NA';
+  const block   = locMode === 'block' ? selBlock : 'NA';
+  const locType = locMode === 'block'
+    ? "No, I don't know how to place exactly, so I will use the reference map divided into blocks"
+    : "Yes, I have exact location from camera or GPS device";
+
+  return obsData.map(state => {
+    const idx = state.idx;
+    const indTime = document.getElementById(`ind-time-${idx}`)?.value || time;
+    return {
+      reporting_date:       now,
+      reporter_name:        name,
+      observation_date:     date,
+      observation_time:     indTime || time,
+      location_type:        locType,
+      LAT:                  lat,
+      LON:                  lon,
+      block_number:         block,
+      sea_turtle_or_ray:    state.type === 'turtle' ? 'sea turtle' : 'ray',
+      taxon:                state.species,
+      male_female:          document.getElementById(`sex-${idx}`)?.value || '0',
+      depth:                document.getElementById(`depth-${idx}`)?.value || '',
+      size:                 document.getElementById(`size-${idx}`)?.value || '',
+      number_of_individuals:document.getElementById(`count-${idx}`)?.value || '1',
+      activity:             (obsData.find(o=>o.idx===idx)?.activities || []).join(', '),
+      special_observations: document.getElementById(`notes-${idx}`)?.value || '',
+      pictures:             document.getElementById(`photos-${idx}`)?.value || '',
+      phone_number:         phone,
+      email_address:        email,
+    };
+  });
+}
+
+async function submitForm() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner"></span> <span class="t" data-k="submitting">${t('submitting')}</span>`;
+
+  const rows = buildRows();
+
+  // If no URL configured, save locally & show success
+  if (!CONFIG.SHEET_URL || CONFIG.SHEET_URL === 'YOUR_APPS_SCRIPT_WEB_APP_URL_HERE') {
+    console.log('📊 Observations (no sheet URL configured):', JSON.stringify(rows, null, 2));
+    showSuccess();
+    btn.disabled = false;
+    btn.innerHTML = `<span class="t" data-k="submit_btn">${t('submit_btn')}</span>`;
+    return;
+  }
+
+  try {
+    await fetch(CONFIG.SHEET_URL, {
+      method: 'POST',
+      body: JSON.stringify({ rows }),
+      headers: { 'Content-Type': 'application/json' },
+      mode: 'no-cors',   // Apps Script requires this
+    });
+    showSuccess();
+  } catch (err) {
+    console.error(err);
+    alert('Error saving data. Please check your Apps Script URL or try again.');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span class="t" data-k="submit_btn">${t('submit_btn')}</span>`;
+  }
+}
+
+function showSuccess() {
+  document.getElementById('success-overlay').classList.remove('hidden');
+}
+
+function resetForm() {
+  document.getElementById('success-overlay').classList.add('hidden');
+  document.getElementById('reporter_name').value = '';
+  document.getElementById('reporter_email').value = '';
+  document.getElementById('reporter_phone').value = '';
+  document.getElementById('obs_date').value = '';
+  document.getElementById('obs_time').value = '';
+  document.getElementById('gps_lat').value = '';
+  document.getElementById('gps_lon').value = '';
+  selBlock = null;
+  document.querySelectorAll('.map-block').forEach(b => b.classList.remove('selected'));
+  updateBlockHint();
+  document.getElementById('obs-list').innerHTML = '';
+  obsData  = [];
+  obsCount = 0;
+  updateCounters();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ──────────────────────────────────────────────
+//  INIT
+// ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  buildFallbackBlocks();
+
+  // Default today's date
+  const today = new Date().toISOString().slice(0,10);
+  document.getElementById('obs_date').value = today;
+
+  // Run translation pass for initial EN render
+  document.querySelectorAll('.t[data-k]').forEach(el => {
+    const key = el.getAttribute('data-k');
+    if (T.en[key] !== undefined) el.textContent = T.en[key];
+  });
+});
+</script>
+</body>
+</html>
