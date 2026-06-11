@@ -266,37 +266,35 @@
       opacity: 0.92;
     }
 
-    /* Block buttons overlaid on the map */
-    .map-block {
-      position: absolute;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: rgba(26,107,154,0.80);
-      border: 2.5px solid rgba(255,255,255,0.9);
+    /* Collapsible reference-map header */
+    .map-ref-summary {
       display: flex;
       align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 700;
-      font-size: 13px;
+      gap: 8px;
       cursor: pointer;
-      transform: translate(-50%, -50%);
-      transition: all 0.18s;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
-      user-select: none;
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--primary-dark);
+      list-style: none;
     }
-
-    .map-block:hover {
-      background: rgba(230,81,0,0.85);
-      transform: translate(-50%, -50%) scale(1.2);
+    .map-ref-summary::-webkit-details-marker { display: none; }
+    .map-ref-summary::after {
+      content: '▾';
+      margin-inline-start: auto;
+      font-size: 14px;
+      opacity: 0.6;
+      transition: transform 0.2s;
     }
+    details[open] .map-ref-summary::after { transform: rotate(180deg); }
 
-    .map-block.selected {
-      background: #e65100;
-      border-color: white;
-      transform: translate(-50%, -50%) scale(1.25);
-      box-shadow: 0 0 0 3px rgba(230,81,0,0.4), 0 3px 10px rgba(0,0,0,0.4);
+    /* Per-sighting location block */
+    .obs-loc { margin-bottom: 4px; }
+    .obs-loc .loc-pin { font-size: 15px; }
+    .loc-hint-card {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.4;
     }
 
     .block-hint {
@@ -713,81 +711,24 @@
     </div>
   </div>
 
-  <!-- ── LOCATION CARD ── -->
-  <div class="card">
-    <div class="section-title">
-      <span class="icon">📍</span>
-      <span class="t" data-k="location_title">Location</span>
-    </div>
-
-    <div class="loc-options">
-      <button class="loc-btn selected" id="loc-block-btn" onclick="setLocMode('block')">
-        <div class="loc-icon">🗺️</div>
-        <div class="loc-label t" data-k="loc_block">Use block map</div>
-        <div class="loc-desc t" data-k="loc_block_desc">Tap a numbered block</div>
-      </button>
-      <button class="loc-btn" id="loc-gps-btn" onclick="setLocMode('gps')">
-        <div class="loc-icon">📡</div>
-        <div class="loc-label t" data-k="loc_gps">Enter coordinates</div>
-        <div class="loc-desc t" data-k="loc_gps_desc">Lat / Lon from GPS or camera</div>
-      </button>
-    </div>
-
-    <!-- Block map panel -->
-    <div class="loc-panel visible" id="panel-block">
-      <div class="map-wrapper">
-        <!--
-          ★ SETUP: Replace "map.jpg" with your actual map filename.
-          Place the file in the same folder as index.html.
-        -->
-        <img src="map.jpg" alt="Bat Galim block map" id="map-img" onerror="this.style.display='none'; document.getElementById('map-fallback').style.display='flex'">
-
-        <!-- Fallback if map image not found -->
-        <div id="map-fallback" style="display:none; background:#1a3a5c; min-height:200px; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:white; padding:20px; text-align:center;">
-          <div style="font-size:40px">🗺️</div>
-          <div style="font-weight:600; font-size:14px">Map image not found</div>
-          <div style="font-size:12px; opacity:0.7">Place <code>map.jpg</code> in the same folder as index.html</div>
-          <div style="margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;" id="fallback-blocks"></div>
-        </div>
-
-        <!--
-          ★ BLOCK POSITIONS: Adjust the left/top % values to match your map image.
-          These are set to match the Bat Galim grid photo you provided.
-          (left%, top%) measured from top-left corner of the image.
-        -->
-        <div class="map-block" style="left:40.8%;top:23.5%" data-block="1"  onclick="selectBlock(1)">1</div>
-        <div class="map-block" style="left:43.5%;top:17.5%" data-block="2"  onclick="selectBlock(2)">2</div>
-        <div class="map-block" style="left:47.0%;top:23.0%" data-block="3"  onclick="selectBlock(3)">3</div>
-        <div class="map-block" style="left:37.8%;top:26.5%" data-block="4"  onclick="selectBlock(4)">4</div>
-        <div class="map-block" style="left:40.0%;top:20.5%" data-block="5"  onclick="selectBlock(5)">5</div>
-        <div class="map-block" style="left:33.5%;top:27.5%" data-block="6"  onclick="selectBlock(6)">6</div>
-        <div class="map-block" style="left:34.5%;top:22.0%" data-block="7"  onclick="selectBlock(7)">7</div>
-        <div class="map-block" style="left:31.0%;top:27.5%" data-block="8"  onclick="selectBlock(8)">8</div>
-        <div class="map-block" style="left:31.5%;top:21.0%" data-block="9"  onclick="selectBlock(9)">9</div>
-        <div class="map-block" style="left:26.5%;top:27.5%" data-block="10" onclick="selectBlock(10)">10</div>
-        <div class="map-block" style="left:25.8%;top:32.0%" data-block="11" onclick="selectBlock(11)">11</div>
-        <div class="map-block" style="left:20.5%;top:33.5%" data-block="12" onclick="selectBlock(12)">12</div>
-      </div>
-      <div class="block-hint t" data-k="block_hint" id="block-hint">Tap a block to select your location</div>
-    </div>
-
-    <!-- GPS panel -->
-    <div class="loc-panel" id="panel-gps">
-      <div class="coord-row">
-        <div class="field">
-          <label class="t" data-k="f_lat">Latitude</label>
-          <input type="number" id="gps_lat" placeholder="32.833" step="0.000001">
-        </div>
-        <div class="field">
-          <label class="t" data-k="f_lon">Longitude</label>
-          <input type="number" id="gps_lon" placeholder="34.974" step="0.000001">
-        </div>
-      </div>
-      <div class="mt-8" style="font-size:12px; color:var(--text-muted)">
-        <span class="t" data-k="gps_hint">Tip: find coordinates from your camera's GPS or from Google Maps (right-click → What's here?)</span>
+  <!-- ── BLOCK REFERENCE MAP (collapsible) ── -->
+  <details class="card map-ref" id="map-ref" open>
+    <summary class="map-ref-summary">
+      <span class="icon">🗺️</span>
+      <span class="t" data-k="map_ref_title">Block reference map</span>
+    </summary>
+    <div class="map-wrapper" style="margin-top:12px;">
+      <!-- ★ SETUP: map.jpg sits in the same folder as index.html. -->
+      <img src="map.jpg" alt="Bat Galim block map" id="map-img" onerror="this.style.display='none'; document.getElementById('map-fallback').style.display='flex'">
+      <!-- Fallback if map image not found -->
+      <div id="map-fallback" style="display:none; background:#1a3a5c; min-height:200px; align-items:center; justify-content:center; flex-direction:column; gap:10px; color:white; padding:20px; text-align:center;">
+        <div style="font-size:40px">🗺️</div>
+        <div style="font-weight:600; font-size:14px">Map image not found</div>
+        <div style="font-size:12px; opacity:0.7">Place <code>map.jpg</code> in the same folder as index.html</div>
       </div>
     </div>
-  </div>
+    <div class="block-hint t" data-k="map_ref_hint">Find your block number on the map, then choose it for each sighting below.</div>
+  </details>
 
   <!-- ── OBSERVATIONS CARD ── -->
   <div class="card">
@@ -859,16 +800,13 @@ const T = {
     f_phone:        'Phone',
     f_date:         'Observation date *',
     f_time:         'Start time',
-    location_title: 'Location',
-    loc_block:      'Use block map',
-    loc_block_desc: 'Tap a numbered block',
-    loc_gps:        'Enter coordinates',
-    loc_gps_desc:   'Lat / Lon from GPS or camera',
-    block_hint:     'Tap a block to select your location',
-    block_selected: 'Selected: Block',
-    f_lat:          'Latitude',
-    f_lon:          'Longitude',
-    gps_hint:       'Find coords from camera GPS or Google Maps (right-click → What\'s here?)',
+    map_ref_title:  'Block reference map',
+    map_ref_hint:   'Find your block number on the map, then choose it for each sighting below.',
+    q_location:     'Where did you see it?',
+    f_block:        'Block',
+    f_lat:          'Latitude (optional)',
+    f_lon:          'Longitude (optional)',
+    loc_hint_card:  'Pick a block from the map — or enter exact GPS coordinates if you have them.',
     obs_title:      'Sightings',
     add_obs:        'Add a sighting',
     obs_label:      'Sighting',
@@ -928,16 +866,13 @@ const T = {
     f_phone:        'טלפון',
     f_date:         'תאריך התצפית *',
     f_time:         'שעת יציאה',
-    location_title: 'מיקום',
-    loc_block:      'מפת בלוקים',
-    loc_block_desc: 'לחץ על בלוק מספרי',
-    loc_gps:        'קואורדינטות',
-    loc_gps_desc:   'קו רוחב / אורך מ-GPS',
-    block_hint:     'לחץ על בלוק לבחירת המיקום',
-    block_selected: 'נבחר: בלוק',
-    f_lat:          'קו רוחב',
-    f_lon:          'קו אורך',
-    gps_hint:       'ניתן למצוא קואורדינטות מ-GPS של המצלמה או מ-Google Maps',
+    map_ref_title:  'מפת משבצות לעיון',
+    map_ref_hint:   'מצא את מספר המשבצת שלך במפה, ואז בחר אותה עבור כל תצפית למטה.',
+    q_location:     'איפה ראית?',
+    f_block:        'משבצת',
+    f_lat:          'קו רוחב (לא חובה)',
+    f_lon:          'קו אורך (לא חובה)',
+    loc_hint_card:  'בחר משבצת מהמפה — או הזן קואורדינטות GPS מדויקות אם יש לך.',
     obs_title:      'תצפיות',
     add_obs:        'הוסף תצפית',
     obs_label:      'תצפית',
@@ -1069,8 +1004,6 @@ const SPECIES = {
 //  STATE
 // ──────────────────────────────────────────────
 let lang     = 'en';
-let locMode  = 'block';
-let selBlock = null;
 let obsCount = 0;
 let obsData  = [];   // array of observation objects (for tracking state)
 
@@ -1098,67 +1031,10 @@ function setLang(l) {
     const idx = parseInt(card.getAttribute('data-idx'));
     updateObsLabel(card, idx);
   });
-
-  // Update block hint
-  updateBlockHint();
 }
 
 function t(key) {
   return T[lang][key] || T.en[key] || key;
-}
-
-// ──────────────────────────────────────────────
-//  LOCATION
-// ──────────────────────────────────────────────
-function setLocMode(mode) {
-  locMode = mode;
-  document.getElementById('loc-block-btn').classList.toggle('selected', mode === 'block');
-  document.getElementById('loc-gps-btn').classList.toggle('selected', mode === 'gps');
-  document.getElementById('panel-block').classList.toggle('visible', mode === 'block');
-  document.getElementById('panel-gps').classList.toggle('visible', mode === 'gps');
-}
-
-function selectBlock(num) {
-  selBlock = num;
-  document.querySelectorAll('.map-block').forEach(b => {
-    b.classList.toggle('selected', parseInt(b.getAttribute('data-block')) === num);
-  });
-  updateBlockHint();
-  // Populate fallback buttons
-  const fb = document.getElementById('fallback-blocks');
-  if (fb) {
-    Array.from(fb.children).forEach(b => {
-      b.style.background = (parseInt(b.getAttribute('data-block')) === num)
-        ? '#e65100' : 'rgba(255,255,255,0.15)';
-    });
-  }
-}
-
-function updateBlockHint() {
-  const el = document.getElementById('block-hint');
-  if (el) {
-    el.textContent = selBlock
-      ? `${t('block_selected')} ${selBlock}`
-      : t('block_hint');
-  }
-}
-
-// Build fallback block buttons (shown when map image missing)
-function buildFallbackBlocks() {
-  const fb = document.getElementById('fallback-blocks');
-  if (!fb) return;
-  for (let i = 1; i <= 12; i++) {
-    const b = document.createElement('button');
-    b.textContent = i;
-    b.setAttribute('data-block', i);
-    b.onclick = () => selectBlock(i);
-    b.style.cssText = `
-      width:44px; height:44px; border-radius:50%; border:2px solid rgba(255,255,255,0.6);
-      background:rgba(255,255,255,0.15); color:white; font-weight:700; font-size:14px;
-      cursor:pointer; transition:background 0.15s; font-family:inherit;
-    `;
-    fb.appendChild(b);
-  }
 }
 
 // ──────────────────────────────────────────────
@@ -1205,6 +1081,10 @@ function buildObsHTML(idx) {
 
   const activities = ['swimming','resting','eating','sleeping','mating','other'];
 
+  const blockOpts = ['<option value="">—</option>']
+    .concat(Array.from({length:12}, (_,i) => `<option value="${i+1}">${i+1}</option>`))
+    .join('');
+
   return `
   <div class="obs-header">
     <div class="obs-label">
@@ -1214,6 +1094,27 @@ function buildObsHTML(idx) {
     <button class="obs-remove" onclick="removeObservation(${idx})" title="Remove">✕</button>
   </div>
   <div class="obs-body">
+
+    <!-- STEP 0: location (per sighting) -->
+    <div class="obs-loc">
+      <div class="species-label"><span class="loc-pin">📍</span> <span class="t" data-k="q_location">${t('q_location')}</span></div>
+      <div class="detail-grid">
+        <div class="field">
+          <label class="t" data-k="f_block">${t('f_block')}</label>
+          <select id="block-${idx}">${blockOpts}</select>
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_lat">${t('f_lat')}</label>
+          <input type="number" id="lat-${idx}" placeholder="32.833" step="0.000001">
+        </div>
+        <div class="field">
+          <label class="t" data-k="f_lon">${t('f_lon')}</label>
+          <input type="number" id="lon-${idx}" placeholder="34.974" step="0.000001">
+        </div>
+      </div>
+      <div class="loc-hint-card t" data-k="loc_hint_card">${t('loc_hint_card')}</div>
+    </div>
+    <hr class="obs-divider">
 
     <!-- STEP 1: type -->
     <div class="type-question t" data-k="q_type">${t('q_type')}</div>
@@ -1419,19 +1320,17 @@ function validate() {
   if (!email || !email.includes('@')) { alert(t('error_email')); return false; }
   if (!date)                      { alert(t('error_date'));     return false; }
 
-  if (locMode === 'block' && !selBlock) { alert(t('error_location')); return false; }
-  if (locMode === 'gps') {
-    const lat = document.getElementById('gps_lat').value;
-    const lon = document.getElementById('gps_lon').value;
-    if (!lat || !lon) { alert(t('error_location')); return false; }
-  }
-
   const cards = document.querySelectorAll('.obs-card');
   if (cards.length === 0) { alert(t('error_no_obs')); return false; }
 
   for (const state of obsData) {
     if (!state.type)    { alert(t('error_type'));    return false; }
     if (!state.species) { alert(t('error_species')); return false; }
+    // Each sighting needs a location: a block, OR both lat & lon
+    const block = document.getElementById(`block-${state.idx}`)?.value || '';
+    const lat   = document.getElementById(`lat-${state.idx}`)?.value || '';
+    const lon   = document.getElementById(`lon-${state.idx}`)?.value || '';
+    if (!block && !(lat && lon)) { alert(t('error_location')); return false; }
   }
 
   return true;
@@ -1445,25 +1344,28 @@ function buildRows() {
   const time    = document.getElementById('obs_time').value;
   const now     = new Date().toISOString();
 
-  const lat     = locMode === 'gps' ? document.getElementById('gps_lat').value : 'NA';
-  const lon     = locMode === 'gps' ? document.getElementById('gps_lon').value : 'NA';
-  const block   = locMode === 'block' ? selBlock : 'NA';
-  const locType = locMode === 'block'
-    ? "No, I don't know how to place exactly, so I will use the reference map divided into blocks"
-    : "Yes, I have exact location from camera or GPS device";
-
   return obsData.map(state => {
     const idx = state.idx;
     const indTime = document.getElementById(`ind-time-${idx}`)?.value || time;
+
+    // Per-sighting location: GPS if both coords given, otherwise block
+    const cardLat = document.getElementById(`lat-${idx}`)?.value || '';
+    const cardLon = document.getElementById(`lon-${idx}`)?.value || '';
+    const cardBlk = document.getElementById(`block-${idx}`)?.value || '';
+    const hasGps  = cardLat && cardLon;
+    const locType = hasGps
+      ? "Yes, I have exact location from camera or GPS device"
+      : "No, I don't know how to place exactly, so I will use the reference map divided into blocks";
+
     return {
       reporting_date:       now,
       reporter_name:        name,
       observation_date:     date,
       observation_time:     indTime || time,
       location_type:        locType,
-      LAT:                  lat,
-      LON:                  lon,
-      block_number:         block,
+      LAT:                  hasGps ? cardLat : 'NA',
+      LON:                  hasGps ? cardLon : 'NA',
+      block_number:         cardBlk || 'NA',
       sea_turtle_or_ray:    state.type === 'turtle' ? 'sea turtle' : 'ray',
       taxon:                state.species,
       male_female:          document.getElementById(`sex-${idx}`)?.value || '0',
@@ -1525,11 +1427,6 @@ function resetForm() {
   document.getElementById('reporter_phone').value = '';
   document.getElementById('obs_date').value = '';
   document.getElementById('obs_time').value = '';
-  document.getElementById('gps_lat').value = '';
-  document.getElementById('gps_lon').value = '';
-  selBlock = null;
-  document.querySelectorAll('.map-block').forEach(b => b.classList.remove('selected'));
-  updateBlockHint();
   document.getElementById('obs-list').innerHTML = '';
   obsData  = [];
   obsCount = 0;
@@ -1541,8 +1438,6 @@ function resetForm() {
 //  INIT
 // ──────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  buildFallbackBlocks();
-
   // Default today's date
   const today = new Date().toISOString().slice(0,10);
   document.getElementById('obs_date').value = today;
