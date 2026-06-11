@@ -439,8 +439,8 @@
 
     .species-thumb {
       width: 100%;
-      height: 85px;
-      background: #d6e8f2;
+      height: 92px;
+      background: #ffffff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -451,7 +451,7 @@
     .species-thumb img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     .species-thumb .placeholder-icon { font-size: 38px; }
@@ -755,6 +755,10 @@
     All fields marked * are required. Data will be saved to the project spreadsheet.
   </p>
 
+  <p style="text-align:center; font-size:10px; color:var(--text-muted); margin-top:14px; opacity:0.8;" class="t" data-k="illus_credit">
+    Species illustrations © Marc Dando
+  </p>
+
 </main>
 
 <!-- ── STATUS BAR ── -->
@@ -814,7 +818,7 @@ const T = {
     turtle_name:    'Sea Turtle',
     turtle_desc:    'Caretta / Chelonia',
     ray_name:       'Ray',
-    ray_desc:       'Stingray / Guitarfish',
+    ray_desc:       'Stingrays, torpedoes, guitarfish',
     q_species:      'Select species',
     f_sex:          'Sex',
     sex_m:          'Male',
@@ -837,6 +841,7 @@ const T = {
     f_ind_time:     'Time of this sighting (optional)',
     submit_btn:     'Submit all observations',
     submit_note:    'Fields marked * are required. Data is saved to the project spreadsheet.',
+    illus_credit:   'Species illustrations © Marc Dando',
     status_sightings:'Sightings this session:',
     status_hint:    'Fill in session details, then add sightings',
     success_title:  'Thank you!',
@@ -859,7 +864,7 @@ const T = {
   },
   he: {
     app_title:      'סקר ימי – בת גלים',
-    app_sub:        'מדע אזרחי | צבי ים ואלחים',
+    app_sub:        'מדע אזרחי | צבי ים ובטאים',
     session_title:  'פרטי יציאת הצלילה',
     f_name:         'שמך *',
     f_email:        'אימייל *',
@@ -879,8 +884,8 @@ const T = {
     q_type:         'מה ראית?',
     turtle_name:    'צב ים',
     turtle_desc:    'קרטה / כלוניה',
-    ray_name:       'אלח',
-    ray_desc:       'עכנאי / גיטרה',
+    ray_name:       'בטאי',
+    ray_desc:       'טריגונים, חשמלנים, גיטרן',
     q_species:      'בחר מין',
     f_sex:          'מין (ז/נ)',
     sex_m:          'זכר',
@@ -903,6 +908,7 @@ const T = {
     f_ind_time:     'שעת תצפית ספציפית (אופציונלי)',
     submit_btn:     'שלח את כל התצפיות',
     submit_note:    'שדות עם * הם חובה. הנתונים נשמרים בגיליון הפרויקט.',
+    illus_credit:   'איורי המינים © Marc Dando',
     status_sightings:'תצפיות ביציאה הנוכחית:',
     status_hint:    'מלא פרטי יציאה, ואז הוסף תצפיות',
     success_title:  'תודה רבה!',
@@ -932,71 +938,21 @@ const T = {
 // ──────────────────────────────────────────────
 const SPECIES = {
   turtle: [
-    {
-      id: 'Caretta caretta',
-      en: 'Loggerhead Turtle',
-      he: 'צב ים ראש-גדול',
-      icon: '🐢',
-      img: 'species/caretta.jpg',
-      note_en: 'Large head, reddish-brown. Most common here.',
-      note_he: 'ראש גדול, חום-אדמדם. הנפוץ ביותר באזור.',
-    },
-    {
-      id: 'Chelonia mydas',
-      en: 'Green Turtle',
-      he: 'צב ים ירוק',
-      icon: '🐢',
-      img: 'species/mydas.jpg',
-      note_en: 'Smooth shell, smaller head, often juveniles.',
-      note_he: 'שריון חלק, ראש קטן יחסית, לרוב צעירים.',
-    },
+    { id: 'Caretta caretta', en: 'Loggerhead Turtle', he: 'צב ים חום', icon: '🐢', img: 'species/caretta.jpg', note_en: '', note_he: '' },
+    { id: 'Chelonia mydas',  en: 'Green Turtle',      he: 'צב ים ירוק', icon: '🐢', img: 'species/mydas.jpg',   note_en: '', note_he: '' },
   ],
   ray: [
-    {
-      id: 'Dasyatis spp.',
-      en: 'Common Stingray',
-      he: 'עכנאי',
-      icon: '🦈',
-      img: 'species/dasyatis.jpg',
-      note_en: 'Diamond-shaped disc, long whip tail.',
-      note_he: 'גוף מעוין, זנב שוט ארוך.',
-    },
-    {
-      id: 'Himantura spp.',
-      en: 'Whipray',
-      he: 'עכנאי שוט',
-      icon: '🦈',
-      img: 'species/himantura.jpg',
-      note_en: 'Very long thin tail, rounded disc.',
-      note_he: 'זנב ארוך מאוד ודק, דיסק עגלגל.',
-    },
-    {
-      id: 'Rhinoptera marginata',
-      en: 'Lusitanian Cownose Ray',
-      he: 'עכנאי פרה',
-      icon: '🦈',
-      img: 'species/rhinoptera.jpg',
-      note_en: 'Distinctive notched head, schools in open water.',
-      note_he: 'ראש חצוי מאפיין, נוסע בלהקות.',
-    },
-    {
-      id: 'Taeniurops grabatus',
-      en: 'Round Ribbontail Ray',
-      he: 'עכנאי עגול',
-      icon: '🦈',
-      img: 'species/taeniurops.jpg',
-      note_en: 'Circular disc, short tail with ribbon-like fin.',
-      note_he: 'גוף עגול, זנב קצר עם סנפיר-סרט.',
-    },
-    {
-      id: 'Rhinobatidae',
-      en: 'Guitarfish',
-      he: 'דג גיטרה',
-      icon: '🦈',
-      img: 'species/guitarfish.jpg',
-      note_en: 'Shark-like body, flattened front end.',
-      note_he: 'גוף דמוי כריש, חזית שטוחה.',
-    },
+    { id: 'Dasyatis pastinaca',   en: 'Common Stingray',        he: 'טריגון חד אף',  icon: '🦈', img: 'species/dasyatis_pastinaca.jpg',  note_en: '', note_he: '' },
+    { id: 'Dasyatis marmorata',   en: 'Marbled Stingray',       he: 'טריגון אטלנטי', icon: '🦈', img: 'species/dasyatis_marmorata.jpg',  note_en: '', note_he: '' },
+    { id: 'Himantura leoparda',   en: 'Leopard Whipray',        he: 'טריגון נמרי',   icon: '🦈', img: 'species/himantura_leoparda.jpg',  note_en: '', note_he: '' },
+    { id: 'Himantura uarnak',     en: 'Honeycomb Stingray',     he: 'טריגון נקוד',   icon: '🦈', img: 'species/himantura_uarnak.jpg',    note_en: '', note_he: '' },
+    { id: 'Aetomylaeus bovinus',  en: 'Bull Ray',               he: 'טחן פר',        icon: '🦈', img: 'species/aetomylaeus_bovinus.jpg', note_en: '', note_he: '' },
+    { id: 'Rhinoptera marginata', en: 'Lusitanian Cownose Ray', he: 'אברתן רחב שן',  icon: '🦈', img: 'species/rhinoptera_marginata.jpg',note_en: '', note_he: '' },
+    { id: 'Taeniurops grabatus',  en: 'Round Fantail Stingray', he: 'מחבטן אפור',    icon: '🦈', img: 'species/taeniurops_grabatus.jpg', note_en: '', note_he: '' },
+    { id: 'Guitarfish',           en: 'Guitarfish',             he: 'גיטרן',         icon: '🦈', img: 'species/guitarfish.jpg',          note_en: '', note_he: '' },
+    { id: 'Gymnura altavela',     en: 'Spiny Butterfly Ray',    he: 'אגפית משוישת',  icon: '🦈', img: 'species/gymnura_altavela.jpg',    note_en: '', note_he: '' },
+    { id: 'Torpedo marmorata',    en: 'Marbled Torpedo',        he: 'חשמלן משויש',   icon: '🦈', img: 'species/torpedo_marmorata.jpg',   note_en: '', note_he: '' },
+    { id: 'Torpedo torpedo',      en: 'Common Torpedo',         he: 'חשמלן עינוני',  icon: '🦈', img: 'species/torpedo_torpedo.jpg',     note_en: '', note_he: '' },
   ],
 };
 
@@ -1240,11 +1196,11 @@ function buildSpeciesGrid(idx, type) {
       </div>
       <div class="species-info">
         <div class="species-common">${lang === 'he' ? sp.he : sp.en}</div>
-        <div class="species-he" style="${lang === 'he' ? 'display:none' : ''}">${sp.he}</div>
-        <div class="species-sci">${sp.id}</div>
-        <div style="font-size:10px; color:var(--text-muted); margin-top:3px; line-height:1.3">
-          ${lang === 'he' ? sp.note_he : sp.note_en}
-        </div>
+        <div class="species-he">${lang === 'he' ? sp.en : sp.he}</div>
+        ${sp.id !== sp.en ? `<div class="species-sci">${sp.id}</div>` : ''}
+        ${(lang === 'he' ? sp.note_he : sp.note_en)
+          ? `<div style="font-size:10px; color:var(--text-muted); margin-top:3px; line-height:1.3">${lang === 'he' ? sp.note_he : sp.note_en}</div>`
+          : ''}
       </div>`;
 
     grid.appendChild(card);
