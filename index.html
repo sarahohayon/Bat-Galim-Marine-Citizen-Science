@@ -807,7 +807,8 @@ const T = {
     map_ref_title:  'Polygon map',
     map_ref_hint:   'Find your polygon number on the map, then choose it for each sighting below.',
     q_location:     'Where did you see it?',
-    f_block:        'Polygon',
+    f_block:        'Polygon *',
+    f_when:         'When did you see it? (optional)',
     f_lat:          'Latitude (optional)',
     f_lon:          'Longitude (optional)',
     loc_hint_card:  'Pick a polygon from the map — or enter exact GPS coordinates if you have them.',
@@ -819,14 +820,14 @@ const T = {
     turtle_desc:    'Caretta / Chelonia',
     ray_name:       'Ray',
     ray_desc:       'Stingrays, torpedoes, guitarfish',
-    q_species:      'Select species',
-    f_sex:          'Sex',
+    q_species:      'Select species *',
+    f_sex:          'Sex *',
     sex_m:          'Male',
     sex_f:          'Female',
     sex_u:          "I don't know",
-    f_depth:        'Depth',
-    f_size:         'Size (carapace / disc width)',
-    f_count:        'No. of individuals',
+    f_depth:        'Depth *',
+    f_size:         'Size (carapace / disc width) *',
+    f_count:        'No. of individuals *',
     f_activity:     'Activity (select all that apply)',
     act_swimming:   'Swimming',
     act_resting:    'Resting',
@@ -855,6 +856,11 @@ const T = {
     error_no_obs:   'Please add at least one sighting.',
     error_type:     'Please select Sea Turtle or Ray for each sighting.',
     error_species:  'Please select a species for each sighting.',
+    error_polygon:  'Please select a polygon for each sighting.',
+    error_sex:      'Please select sex for each sighting.',
+    error_count:    'Please enter the number of individuals for each sighting.',
+    error_depth:    'Please select depth for each sighting.',
+    error_size:     'Please select size for each sighting.',
     submitting:     'Saving…',
     depth_1_2:  '1–2 m', depth_2_3: '2–3 m', depth_3_4: '3–4 m',
     depth_4_5:  '4–5 m', depth_5_6: '5–6 m', depth_6_7: '6–7 m',
@@ -875,7 +881,8 @@ const T = {
     map_ref_title:  'מפת פוליגונים',
     map_ref_hint:   'מצא את מספר הפוליגון שלך במפה, ואז בחר אותו עבור כל תצפית למטה.',
     q_location:     'איפה ראית?',
-    f_block:        'פוליגון',
+    f_block:        'פוליגון *',
+    f_when:         'מתי ראית? (אופציונלי)',
     f_lat:          'קו רוחב (לא חובה)',
     f_lon:          'קו אורך (לא חובה)',
     loc_hint_card:  'בחר פוליגון מהמפה — או הזן קואורדינטות GPS מדויקות אם יש לך.',
@@ -887,14 +894,14 @@ const T = {
     turtle_desc:    'קרטה / כלוניה',
     ray_name:       'בטאי',
     ray_desc:       'טריגונים, חשמלנים, גיטרן',
-    q_species:      'בחר מין',
-    f_sex:          'מין (ז/נ)',
+    q_species:      'בחר מין *',
+    f_sex:          'מין (ז/נ) *',
     sex_m:          'זכר',
     sex_f:          'נקבה',
     sex_u:          'לא יודע/ת',
-    f_depth:        'עומק',
-    f_size:         'גודל (רוחב שריון / דיסק)',
-    f_count:        'מספר פרטים',
+    f_depth:        'עומק *',
+    f_size:         'גודל (רוחב שריון / דיסק) *',
+    f_count:        'מספר פרטים *',
     f_activity:     'פעילות (ניתן לסמן מספר)',
     act_swimming:   'שחייה',
     act_resting:    'מנוחה',
@@ -923,6 +930,11 @@ const T = {
     error_no_obs:   'נא להוסיף לפחות תצפית אחת.',
     error_type:     'נא לבחור צב ים או אלח לכל תצפית.',
     error_species:  'נא לבחור מין לכל תצפית.',
+    error_polygon:  'נא לבחור פוליגון לכל תצפית.',
+    error_sex:      'נא לבחור מין (ז/נ) לכל תצפית.',
+    error_count:    'נא להזין מספר פרטים לכל תצפית.',
+    error_depth:    'נא לבחור עומק לכל תצפית.',
+    error_size:     'נא לבחור גודל לכל תצפית.',
     submitting:     'שומר…',
     depth_1_2:  '1–2 מ\'', depth_2_3: '2–3 מ\'', depth_3_4: '3–4 מ\'',
     depth_4_5:  '4–5 מ\'', depth_5_6: '5–6 מ\'', depth_6_7: '6–7 מ\'',
@@ -1078,6 +1090,10 @@ function buildObsHTML(idx) {
         </div>
       </div>
       <div class="loc-hint-card t" data-k="loc_hint_card">${t('loc_hint_card')}</div>
+      <div class="field mt-8">
+        <label class="t" data-k="f_when">${t('f_when')}</label>
+        <input type="time" id="ind-time-${idx}">
+      </div>
     </div>
     <hr class="obs-divider">
 
@@ -1142,15 +1158,9 @@ function buildObsHTML(idx) {
         <textarea id="notes-${idx}" placeholder="${t('f_notes_ph')}"></textarea>
       </div>
 
-      <div class="form-row mt-8">
-        <div class="field">
-          <label class="t" data-k="f_photos">${t('f_photos')}</label>
-          <input type="text" id="photos-${idx}" placeholder="${t('f_photos_ph')}">
-        </div>
-        <div class="field">
-          <label class="t" data-k="f_ind_time">${t('f_ind_time')}</label>
-          <input type="time" id="ind-time-${idx}">
-        </div>
+      <div class="field mt-8">
+        <label class="t" data-k="f_photos">${t('f_photos')}</label>
+        <input type="text" id="photos-${idx}" placeholder="${t('f_photos_ph')}">
       </div>
     </div>
 
@@ -1287,13 +1297,20 @@ function validate() {
   if (cards.length === 0) { alert(t('error_no_obs')); return false; }
 
   for (const state of obsData) {
+    const idx = state.idx;
     if (!state.type)    { alert(t('error_type'));    return false; }
     if (!state.species) { alert(t('error_species')); return false; }
-    // Each sighting needs a location: a block, OR both lat & lon
-    const block = document.getElementById(`block-${state.idx}`)?.value || '';
-    const lat   = document.getElementById(`lat-${state.idx}`)?.value || '';
-    const lon   = document.getElementById(`lon-${state.idx}`)?.value || '';
-    if (!block && !(lat && lon)) { alert(t('error_location')); return false; }
+    // Mandatory per sighting: polygon, sex, number, depth, size
+    const block = document.getElementById(`block-${idx}`)?.value || '';
+    const sex   = document.getElementById(`sex-${idx}`)?.value || '';
+    const count = document.getElementById(`count-${idx}`)?.value || '';
+    const depth = document.getElementById(`depth-${idx}`)?.value || '';
+    const size  = document.getElementById(`size-${idx}`)?.value || '';
+    if (!block)                       { alert(t('error_polygon')); return false; }
+    if (!sex)                         { alert(t('error_sex'));     return false; }
+    if (!count || Number(count) < 1)  { alert(t('error_count'));   return false; }
+    if (!depth)                       { alert(t('error_depth'));   return false; }
+    if (!size)                        { alert(t('error_size'));    return false; }
   }
 
   return true;
