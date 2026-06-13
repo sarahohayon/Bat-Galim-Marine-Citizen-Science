@@ -290,6 +290,31 @@
     /* Per-sighting location block */
     .obs-loc { margin-bottom: 4px; }
     .obs-loc .loc-pin { font-size: 15px; }
+
+    /* ─── PHOTO UPLOAD ─── */
+    .photo-input { display: none; }
+    .photo-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 16px; border: 1.5px dashed var(--primary);
+      border-radius: var(--radius-sm); background: var(--primary-light);
+      color: var(--primary-dark); font-weight: 600; font-size: 13px;
+      cursor: pointer; transition: all 0.15s; font-family: inherit;
+    }
+    .photo-btn:hover { background: var(--primary); color: #fff; }
+    .photo-btn.has-photo { border-style: solid; }
+    .photo-status {
+      margin-top: 8px; display: flex; align-items: center; gap: 10px;
+      font-size: 12px; color: var(--text-muted);
+    }
+    .photo-status img {
+      width: 54px; height: 54px; object-fit: cover;
+      border-radius: 6px; border: 1px solid var(--border);
+    }
+    .photo-remove {
+      background: none; border: none; color: var(--danger);
+      cursor: pointer; font-size: 12px; font-weight: 600; text-decoration: underline;
+      font-family: inherit; padding: 0;
+    }
     .loc-hint-card {
       font-size: 11px;
       color: var(--text-muted);
@@ -838,8 +863,12 @@ const T = {
     act_other:      'Other',
     f_notes:        'Special observations',
     f_notes_ph:     'Any notable behaviour, injuries, tags, unusual conditions…',
-    f_photos:       'Photo reference',
-    f_photos_ph:    'Google Drive link, filename, or description',
+    f_photos:       'Photo (optional)',
+    f_photo_btn:    'Add / take a photo',
+    photo_processing:'Processing photo…',
+    photo_attached: 'Photo attached',
+    photo_remove:   'Remove',
+    photo_error:    'Could not read that image — try another.',
     f_ind_time:     'Time of this sighting (optional)',
     submit_btn:     'Submit all observations',
     submit_note:    'Fields marked * are required. Data is saved to the project spreadsheet.',
@@ -912,8 +941,12 @@ const T = {
     act_other:      'אחר',
     f_notes:        'תצפיות מיוחדות',
     f_notes_ph:     'התנהגות חריגה, פצעים, תגיות, תנאים יוצאי דופן…',
-    f_photos:       'הפניה לתמונות',
-    f_photos_ph:    'קישור Google Drive, שם קובץ, או תיאור',
+    f_photos:       'תמונה (אופציונלי)',
+    f_photo_btn:    'הוסף / צלם תמונה',
+    photo_processing:'מעבד תמונה…',
+    photo_attached: 'תמונה צורפה',
+    photo_remove:   'הסר',
+    photo_error:    'לא ניתן לקרוא את התמונה — נסה אחרת.',
     f_ind_time:     'שעת תצפית ספציפית (אופציונלי)',
     submit_btn:     'שלח את כל התצפיות',
     submit_note:    'שדות עם * הם חובה. הנתונים נשמרים בגיליון הפרויקט.',
@@ -1160,7 +1193,12 @@ function buildObsHTML(idx) {
 
       <div class="field mt-8">
         <label class="t" data-k="f_photos">${t('f_photos')}</label>
-        <input type="text" id="photos-${idx}" placeholder="${t('f_photos_ph')}">
+        <input type="file" accept="image/*" id="photo-input-${idx}" class="photo-input" onchange="handlePhoto(${idx}, this)">
+        <label for="photo-input-${idx}" class="photo-btn" id="photo-btn-${idx}">
+          <span style="font-size:18px">📷</span>
+          <span class="t" data-k="f_photo_btn">${t('f_photo_btn')}</span>
+        </label>
+        <div class="photo-status" id="photo-status-${idx}"></div>
       </div>
     </div>
 
@@ -1316,6 +1354,52 @@ function validate() {
   return true;
 }
 
+// ──────────────────────────────────────────────
+//  PHOTO UPLOAD — shrink on device, keep base64 in state
+// ──────────────────────────────────────────────
+function handlePhoto(idx, input) {
+  const file  = input.files && input.files[0];
+  const state = obsData.find(o => o.idx === idx);
+  if (!file || !state) return;
+  const statusEl = document.getElementById(`photo-status-${idx}`);
+  const btnEl    = document.getElementById(`photo-btn-${idx}`);
+  if (statusEl) statusEl.textContent = t('photo_processing');
+
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = e => { img.src = e.target.result; };
+  img.onerror = () => { if (statusEl) statusEl.textContent = t('photo_error'); };
+  img.onload = () => {
+    const MAX = 1280;
+    let w = img.width, h = img.height;
+    if (w > MAX || h > MAX) {
+      if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+      else        { w = Math.round(w * MAX / h); h = MAX; }
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+    state.photoData = dataUrl.split(',')[1];          // base64 payload
+    state.photoMime = 'image/jpeg';
+    state.photoName = file.name.replace(/\.[^.]+$/, '') + '.jpg';
+    const kb = Math.round(state.photoData.length * 0.75 / 1024);
+    if (statusEl) statusEl.innerHTML =
+      `<img src="${dataUrl}" alt="preview"> <span>${t('photo_attached')} (${kb} KB)</span>` +
+      ` <button type="button" class="photo-remove" onclick="removePhoto(${idx})">${t('photo_remove')}</button>`;
+    if (btnEl) btnEl.classList.add('has-photo');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removePhoto(idx) {
+  const state = obsData.find(o => o.idx === idx);
+  if (state) { delete state.photoData; delete state.photoMime; delete state.photoName; }
+  const inp = document.getElementById(`photo-input-${idx}`);  if (inp) inp.value = '';
+  const st  = document.getElementById(`photo-status-${idx}`); if (st)  st.innerHTML = '';
+  const btn = document.getElementById(`photo-btn-${idx}`);    if (btn) btn.classList.remove('has-photo');
+}
+
 function buildRows() {
   const name    = document.getElementById('reporter_name').value.trim();
   const email   = document.getElementById('reporter_email').value.trim();
@@ -1354,7 +1438,10 @@ function buildRows() {
       number_of_individuals:document.getElementById(`count-${idx}`)?.value || '1',
       activity:             (obsData.find(o=>o.idx===idx)?.activities || []).join(', '),
       special_observations: document.getElementById(`notes-${idx}`)?.value || '',
-      pictures:             document.getElementById(`photos-${idx}`)?.value || '',
+      pictures:             '',                       // Apps Script fills this with the Drive link
+      photo_data:           state.photoData || '',
+      photo_mime:           state.photoMime || '',
+      photo_name:           state.photoName || '',
       phone_number:         phone,
       email_address:        email,
     };
