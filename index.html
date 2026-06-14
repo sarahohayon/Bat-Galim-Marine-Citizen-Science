@@ -71,6 +71,14 @@
 
     .header-logo { font-size: 30px; line-height: 1; }
 
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    [dir="rtl"] .header-right { flex-direction: row-reverse; }
+    .header-logo-img {
+      height: 52px; width: 52px;
+      display: block; flex-shrink: 0;
+      filter: drop-shadow(0 1px 3px rgba(0,0,0,0.3));
+    }
+
     .header-left h1 { font-size: 17px; font-weight: 700; line-height: 1.2; }
     .header-left p  { font-size: 11px; opacity: 0.8; margin-top: 1px; }
 
@@ -680,15 +688,17 @@
 <!-- ════════════ HEADER ════════════ -->
 <header>
   <div class="header-left">
-    <div class="header-logo"><svg viewBox="0 0 64 64" width="1em" height="1em" style="display:block" aria-hidden="true"><g fill="#ffffff"><ellipse cx="32" cy="11" rx="5.5" ry="5.5"/><ellipse cx="13" cy="23" rx="6" ry="3.8" transform="rotate(-42 13 23)"/><ellipse cx="51" cy="23" rx="6" ry="3.8" transform="rotate(42 51 23)"/><ellipse cx="16" cy="47" rx="5" ry="3.3" transform="rotate(42 16 47)"/><ellipse cx="48" cy="47" rx="5" ry="3.3" transform="rotate(-42 48 47)"/><ellipse cx="32" cy="35" rx="15" ry="18"/></g><g fill="#1a6b9a" opacity="0.55"><circle cx="32" cy="27" r="2.2"/><circle cx="25" cy="36" r="2.2"/><circle cx="39" cy="36" r="2.2"/><circle cx="32" cy="45" r="2.2"/></g></svg></div>
     <div>
       <h1 class="t" data-k="app_title">Bat Galim Marine Observations</h1>
       <p class="t"  data-k="app_sub">Citizen Science | Sea Turtles &amp; Rays</p>
     </div>
   </div>
-  <div class="lang-toggle">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn"        onclick="setLang('he')">עב</button>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn"        onclick="setLang('he')">עב</button>
+    </div>
+    <img class="header-logo-img" src="logo.png" alt="Bat Galim Sea Defenders" onerror="this.style.display='none'">
   </div>
 </header>
 
